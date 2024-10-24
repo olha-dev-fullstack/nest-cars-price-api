@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { randomBytes, scrypt as _scrypt, BinaryLike } from 'crypto';
+import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
 
 const scrypt = promisify(_scrypt);
