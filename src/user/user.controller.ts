@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -13,12 +14,12 @@ import {
 import { CreateUserDto } from './dto/createUser.dto';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/updateUser.dto';
-import { Serialize } from 'src/interceptors/serialize.interceptor';
+import { Serialize } from '../interceptors/serialize.interceptor';
 import { UserDto } from './dto/user.dto';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/currentUser.decorator';
 import { User } from './user.entity';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('auth')
 @Serialize(UserDto)
@@ -34,14 +35,20 @@ export class UserController {
   }
 
   @Post('/signup')
-  public async createUser(@Body() body: CreateUserDto, @Session() session: any) {
+  public async createUser(
+    @Body() body: CreateUserDto,
+    @Session() session: any,
+  ) {
     const user = await this.authService.signup(body.email, body.password);
     session.userId = user.id;
     return user;
   }
 
   @Post('/signin')
-  public async signinUser(@Body() body: CreateUserDto, @Session() session: any) {
+  public async signinUser(
+    @Body() body: CreateUserDto,
+    @Session() session: any,
+  ) {
     const user = await this.authService.signin(body.email, body.password);
     session.userId = user.id;
     return user;
@@ -54,7 +61,11 @@ export class UserController {
 
   @Get('/:id')
   public async findUser(@Param('id') id: string) {
-    return this.userServise.findOne(parseInt(id));
+    const user = await this.userServise.findOne(parseInt(id));
+    if (!user) {
+      throw new NotFoundException();
+    }
+    return user;
   }
 
   @Get()
