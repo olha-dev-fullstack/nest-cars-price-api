@@ -18,6 +18,9 @@ export class UserService {
     return this.userRepository.find({ where: { email: email } });
   }
   public async findOne(id: number) {
+    if (!id) {
+      return null;
+    }
     return this.userRepository.findOne({ where: { id } });
   }
 
