@@ -54,6 +54,7 @@ export class UserController {
     return user;
   }
 
+  @UseGuards(AuthGuard)
   @Post('/signout')
   public async signout(@Session() session: any) {
     session.userId = null;
@@ -78,6 +79,7 @@ export class UserController {
     return this.userServise.remove(parseInt(id));
   }
 
+  @UseGuards(AuthGuard)
   @Patch('/:id')
   public async updateUser(
     @Param('id') id: string,

@@ -1,73 +1,161 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Cars price API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This is a simple REST used cars pricing API where users can authenticate, create reports about cars to sell and get price prediction. The project is built using NestJS, SQLite and TypeORM. Authorization and authentication works on sessions and cookies.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- **Reports Management**: Users can create and approve reports (approve only for users with admin permission).
+- **Authorization**: Is implemented using cookie session. After registration user receives token which is attached to cookie header for all following reports until user signs out
+- **User account management**: It is possible to create, update, delete and view user profile
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Technologies
 
-## Installation
+- **NestJS**: A progressive Node.js framework for building efficient and scalable server-side applications.
+- **SQLite**: Simple and lightweight solution for local development to work with database.
+- **TypeORM**: An ORM used for database interaction and migrations.
+- **Jest**: Testing framework used for writing unit and integration tests.
+
+## How to run the project
+
+### 1. Clone the Repository
 
 ```bash
-$ npm install
+git clone https://github.com/olha-dev-fullstack/nest-cars-price-api.git
+cd nest-cars-price-api
 ```
 
-## Running the app
+### 2. Install Dependencies
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Test
+### 3. Create `.env` files:
+
+- `dev.env` for developmet mode with next settings:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+DB_NAME=db.sqlite
+COOKIE_KEY=<your value>
 ```
 
-## Support
+- `test.env` for running `e2e` tests:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+DB_NAME=db.sqlite
+COOKIE_KEY=<your value>
+```
 
-## Stay in touch
+- `production.env` (for production Postgres database is used):
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+DATABASE_URL=<url to your database>
+COOKIE_KEY=<your value>
+```
 
-## License
+### 3. Database Setup
 
-Nest is [MIT licensed](LICENSE).
+Run migrations to create local database:
+
+```bash
+npm run migration:run
+```
+
+### 5. Start the Server
+
+Run the NestJS server:
+
+- watch mode
+
+```bash
+npm run start:dev
+```
+
+- dev mode
+
+```bash
+npm run start
+```
+
+- production mode
+
+```bash
+npm run start:prod
+```
+
+The API will be available at `http://localhost:3000`.
+
+## API Endpoints
+
+#### Authentication and Users
+
+- **POST** `/auth/signup`: User signup (created as admin by default)
+
+```json
+{
+  "email": "test@test.com",
+  "password": "password"
+}
+```
+
+- **GET** `/auth/:id`: Get authorized user profile (requires authentication)
+- **DELETE** `/auth/:id` Delete user
+- **PATCH** `/auth/:id` Update user (requires authentication)
+
+```json
+{
+  "email": "test@test.com",
+  "password": "password"
+}
+```
+
+- **POST** `/auth/signin`: User signin
+
+```json
+{
+  "email": "test@test.com",
+  "password": "password"
+}
+```
+
+- **GET** `/auth/me`: Get current user (requires auth)
+
+#### Reports
+
+- **POST** `/report`: Create a new report (requires authentication)
+
+```json
+{
+  "make": "ford",
+  "model": "mustang",
+  "year": 1982,
+  "mileage": 50000,
+  "lng": 45,
+  "lat": 45,
+  "price": 20000
+}
+```
+
+- **GET** `/report/:id`: Approve or disapprove report (admin only)
+
+```json
+{
+  "approved": true
+}
+```
+
+- **GET** `/report/?make=ford&model=mustang&lng=45&lat=45&mileage=20000&year=1981`: Get estimated car price according to params
+
+## Running Tests
+
+To run unit tests, use:
+
+```bash
+npm run test
+```
+
+To run End-to-End tests, use:
+
+```bash
+npm run test:e2e
+```
