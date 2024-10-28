@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_PIPE } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import ormConfig from './config/typeorm.config';
+import productionConfig from './config/production.config'
 const cookieSession = require('cookie-session');
 
 @Module({
@@ -16,7 +17,7 @@ const cookieSession = require('cookie-session');
       envFilePath: `${process.env.NODE_ENV}.env`,
     }),
     TypeOrmModule.forRootAsync({
-      useFactory: ormConfig,
+      useFactory: process.env.NODE_ENV === 'production' ? productionConfig : ormConfig,
     }),
     UserModule,
     ReportModule,
